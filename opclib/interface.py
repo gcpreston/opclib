@@ -121,7 +121,7 @@ class LightConfig(abc.ABC):
         elif pattern == 'Off':
             light = patterns.Off()
         else:
-            raise ValueError(f'{pattern!r} is not associated with any lighting'
+            raise ValueError(f'{pattern!r} is not associated with any lighting '
                              f'configurations')
 
         if strobe:

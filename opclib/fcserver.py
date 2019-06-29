@@ -6,6 +6,9 @@ import asyncio
 import atexit
 import logging
 
+logger = logging.getLogger('fcserver')
+logger.setLevel(logging.INFO)
+
 
 class FadecandyServer:
     """
@@ -31,7 +34,7 @@ class FadecandyServer:
 
             here = os.path.dirname(os.path.abspath(__file__))
             _fcserver_proc = subprocess.Popen(here + '/bin/' + server)
-            logging.info(f'Started {server}')
+            logger.info(f'Started {server}')
             return _fcserver_proc
 
         if not self._server_running:
@@ -44,7 +47,7 @@ class FadecandyServer:
                 self._server_running = True
                 atexit.register(self.stop)  # stop fcserver on exit
             else:
-                logging.info('Another instance of fcserver is already running')
+                logger.info('Another instance of fcserver is already running')
 
     def stop(self) -> None:
         """
@@ -53,7 +56,7 @@ class FadecandyServer:
         if self._server_running:
             self._fcserver_proc.terminate()
             self._server_running = False
-            logging.info('Stopped fcserver')
+            logger.info('Stopped fcserver')
 
     def __repr__(self):
         if self._server_running:
