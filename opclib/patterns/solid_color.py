@@ -8,12 +8,12 @@ class SolidColor(StaticLightConfig):
     Display a solid color.
     """
 
-    def __init__(self, color: str, num_leds: int = 512, port: int = 7890):
+    def __init__(self, color: str, num_leds: int = 512):
         """
         Initialize a new SolidColor configuration.
         :param color: the color to dislpay (in format "#RRGGBB")
         """
-        super().__init__(num_leds, port)
+        super().__init__(num_leds)
         self.color: Tuple[int, int, int] = get_color(color)
 
     def pattern(self):

@@ -5,6 +5,7 @@ from typing import NewType, List, Tuple
 from . import opc
 from .opcutil import is_color
 
+# TODO: Redefine Color to Tuple[int, int, int]
 Color = NewType('Color', Tuple[float, float, float])
 
 
@@ -19,36 +20,35 @@ class LightConfig(abc.ABC):
     """
     Abstract base class for an LED lighting configuration.
     """
+    client: opc.Client
 
-    def __init__(self, num_leds: int = 512, port: int = 7890):
+    def __init__(self, num_leds: int = 512):
         """
         Initialize a new LightConfig.
 
         :param num_leds: the number of LEDs
-        :param port: the port the Fadecandy server is running on
         """
-        self.client: opc.Client = opc.Client(f'localhost:{port}')
         self.num_leds: int = num_leds
 
     def __iter__(self):
         """
         Define any LightConfig to be iterable.
-        :return: self
         """
         return self
 
     @abc.abstractmethod
-    def __next__(self):
+    def __next__(self) -> List[Color]:
         """
-        Generate the next list of colors to push to the Fadecandy client.
-        :return: the new colors
+        Get the next list of colors to push to the Fadecandy client.
         """
 
     @abc.abstractmethod
-    def run(self) -> None:
+    def run(self, host: str = 'localhost', port: int = 7890) -> None:
         """
         Run this lighting configuration.
         """
+        print(f'Running on {host}:{port}')
+        self.client = opc.Client(f'{host}:{port}')
 
     @staticmethod
     def factory(pattern: str = None, strobe: bool = False, color: str = None,
@@ -138,7 +138,8 @@ class StaticLightConfig(LightConfig, abc.ABC):
     def __next__(self):
         return self.pattern()
 
-    def run(self) -> None:
+    def run(self, host: str = 'localhost', port: int = 7890) -> None:
+        super().run(host, port)  # initialize client
         black = [(0, 0, 0)] * self.num_leds
         pattern = self.pattern()
 
@@ -163,20 +164,19 @@ class DynamicLightConfig(LightConfig, abc.ABC):
     A lighting configuration that displays a moving pattern.
     """
 
-    def __init__(self, speed: int = None, num_leds: int = 512,
-                 port: int = 7890):
+    def __init__(self, speed: int = None, num_leds: int = 512):
         """
         Initialize a new LightConfig.
 
         :param speed: the speed at which the lights change (updates per second)
         :param num_leds: the number of LEDs
-        :param port: the port the Fadecandy server is running on
         """
-        super().__init__(num_leds, port)
+        super().__init__(num_leds)
         if speed:
             self.speed = speed
 
-    def run(self) -> None:
+    def run(self, host: str = 'localhost', port: int = 7890) -> None:
+        super().run(host, port)  # initialize client
         while True:
             pixels = next(self)
             self.client.put_pixels(pixels)
