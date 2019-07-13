@@ -1,6 +1,6 @@
 from typing import List
 from ..interface import DynamicLightConfig
-from ..opcutil import Color, get_color, shift
+from ..opcutil import ColorHex, ColorData, get_color, shift
 
 
 class Fade(DynamicLightConfig):
@@ -11,7 +11,7 @@ class Fade(DynamicLightConfig):
     _fade_index = 0  # how far we are between two colors [0-9]
     speed = 5
 
-    def __init__(self, colors: List[str], speed: int = None,
+    def __init__(self, colors: List[ColorHex], speed: int = None,
                  num_leds: int = 512):
         """
         Initialize a new Fade configuration.
@@ -22,7 +22,7 @@ class Fade(DynamicLightConfig):
         self._current_color = self.colors[0]
         self.pixels = [self._current_color] * self.num_leds
 
-    def __next__(self) -> List[Color]:
+    def __next__(self) -> List[ColorData]:
         if self._fade_index == 9:
             # go to next color
             self._color_index = (self._color_index + 1) % len(self.colors)
@@ -32,7 +32,7 @@ class Fade(DynamicLightConfig):
 
         # shift pixels 10% towards the next color
         self._current_color = shift(self._current_color,
-                                            self.colors[self._color_index], 0.1)
+                                    self.colors[self._color_index], 0.1)
         self.pixels = [self._current_color] * self.num_leds
 
         return self.pixels

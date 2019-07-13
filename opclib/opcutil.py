@@ -1,9 +1,17 @@
+"""
+Module for Open Pixel Control utilities. This module provides color definitions
+and list manipulation functions. The list manipulation functions are designed
+to be used with lists of ColorData (for pushing colors to LEDs), but they can
+be used with any kinds of lists.
+"""
+
 import re
 import math
 
 from typing import Tuple, List
 
-Color = Tuple[float, float, float]
+ColorHex = str  # "#RRGGBB" format, can't be dynamically enforced unfortunately
+ColorData = Tuple[float, float, float]  # 3-tuple representing actual RGB value
 
 
 def is_color(s: str) -> bool:
@@ -16,7 +24,7 @@ def is_color(s: str) -> bool:
     return bool(re.match(r'^#[A-Fa-f0-9]{6}$', s))
 
 
-def get_color(hex_str: str) -> Color:
+def get_color(hex_str: ColorHex) -> ColorData:
     """
     Calculate a 3-tuple representing the color in the given hex.
 
@@ -39,61 +47,7 @@ def get_color(hex_str: str) -> Color:
     return red, blue, green
 
 
-def even_spread(colors: List, num_leds: int) -> List:
-    """
-    Evenly spread out the colors across the LEDs in order.
-
-    :param colors: a list of values to spread
-    :param num_leds: the length of the list to create from the given colors
-    :return: a list consisting of ``colors`` spread across ``num_leds`` indices
-    :raises ValueError: if ``colors`` is empty or ``num_leds`` is negative
-    """
-    if len(colors) < 1:
-        raise ValueError('no colors provided')
-    if num_leds < 0:
-        raise ValueError('cannot spread across a negative number of LEDs')
-
-    pixels = []
-    pixels_per_color = math.floor(num_leds / len(colors))
-    remainder = num_leds % len(colors)
-
-    for color in colors:
-        pixels += [color] * pixels_per_color
-    pixels += [colors[0]] * remainder
-
-    return pixels
-
-
-def spread(colors: List, num_leds: int, pixels_per_color: int):
-    """
-    Spread out the colors across the LEDs in order using the specified number
-    of pixels per color.
-
-    :param colors: the values to spread
-    :param num_leds: the length of the list to create from the given colors
-    :param pixels_per_color: the length of each color sequence
-    :return: a list consisting of sequences of values in ``colors`` of length
-       ``pixels_per_color`` each
-    :raises ValueError: if ``colors`` is empty or either ``num_leds`` or
-        ``pixels_per_color`` is negative
-    """
-    if len(colors) < 1:
-        raise ValueError('no colors provided')
-    if num_leds < 0 or pixels_per_color < 0:
-        raise ValueError('cannot spread across a negative number of LEDs')
-
-    pixels = []
-    color_index = 0
-    leds_left = num_leds
-    while leds_left > 0:
-        pixels += [colors[color_index]] * min(pixels_per_color, leds_left)
-        color_index = (color_index + 1) % len(colors)
-        leds_left -= pixels_per_color
-
-    return pixels
-
-
-def shift(current: Color, goal: Color, p: float) -> Color:
+def shift(current: ColorData, goal: ColorData, p: float) -> ColorData:
     """
     Shift a color towards another.
 
@@ -106,6 +60,72 @@ def shift(current: Color, goal: Color, p: float) -> Color:
     # explicitly give the first 3 values so it doesn't complain about being
     # Tuple[float, ...] rather than Tuple[float, float, float]
     return new_vals[0], new_vals[1], new_vals[2]
+
+
+def even_spread(vals: List, n: int) -> List:
+    """
+    Evenly spread out the values across a larger list in order, repeating if the
+    end of ``vals`` is reached.
+
+    Example:
+    >>> even_spread([1, 1, 2], 7) == [1, 1, 2, 1, 1, 2, 1]
+
+    :param vals: a list of values to spread
+    :param n: the length of the list to create from the given values
+    :return: a list consisting of ``colors`` spread across ``num_leds`` indices
+    :raises ValueError: if ``colors`` is empty or ``num_leds`` is negative
+    """
+    if len(vals) < 1:
+        raise ValueError('no values provided')
+    if n < 0:
+        raise ValueError('list length cannot be negative')
+
+    new_vals = []
+    length_per_val = math.floor(n / len(vals))
+    remainder = n % len(vals)
+
+    for val in vals:
+        new_vals += [val] * length_per_val
+    new_vals += [vals[0]] * remainder
+
+    return new_vals
+
+
+def spread(vals: List, seq_length: int, list_length: int):
+    """
+    Spread out values across a certain number of indices using the specified
+    number of times to repeat each value, repeating if the end of ``vals`` is
+    reached.
+
+    Examples:
+    >>> spread([1, 2, 2, 3], 2, 7) == [1, 1, 2, 2, 2, 2, 3]
+
+    >>> spread([4, 5], 3, 8) == [4, 4, 4, 5, 5, 5, 4, 4]
+
+    :param vals: the values to spread
+    :param seq_length: the length of each value sequence
+    :param list_length: the length of the list to create from the given colors
+    :return: a list consisting of sequences of values in ``vals`` of length
+        ``r`` each
+    :raises ValueError: if ``vals`` is empty or either ``n`` or
+        ``r`` is negative
+    """
+    if len(vals) < 1:
+        raise ValueError('no values provided')
+    if list_length < 0:
+        raise ValueError('list length cannot be negative')
+    if seq_length < 0:
+        raise ValueError('sequence length cannot be negative')
+
+    new_vals = []
+    idx = 0
+    remaining = list_length
+    while remaining > 0:
+        new_vals += [vals[idx]] * min(seq_length, remaining)
+        idx = (idx + 1) % len(vals)
+        remaining -= seq_length
+
+    return new_vals
 
 
 def rotate_left(l: List, n: int):

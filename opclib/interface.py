@@ -3,7 +3,7 @@ import time
 
 from typing import List
 from . import opc
-from .opcutil import Color, is_color
+from .opcutil import ColorData, is_color
 
 
 # IDEA
@@ -34,7 +34,7 @@ class LightConfig(abc.ABC):
         return self
 
     @abc.abstractmethod
-    def __next__(self) -> List[Color]:
+    def __next__(self) -> List[ColorData]:
         """
         Get the next list of colors to push to the Fadecandy client.
         """
@@ -63,7 +63,6 @@ class LightConfig(abc.ABC):
         :raises ValueError: if ``name`` is not associated with any patterns or
             the required arguments for the specified config are not provided
         """
-        # TODO: Allow user to specify host and port in factory
 
         def get_color():
             """
@@ -148,7 +147,7 @@ class StaticLightConfig(LightConfig, abc.ABC):
         self.client.put_pixels(pattern)
 
     @abc.abstractmethod
-    def pattern(self) -> List[Color]:
+    def pattern(self) -> List[ColorData]:
         """
         Define the pattern this lighting configuration should display.
         :return: a list of RGB values to display

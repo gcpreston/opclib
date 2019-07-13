@@ -17,7 +17,7 @@ class Scroll(DynamicLightConfig):
         """
         super().__init__(speed, num_leds)
         self.colors = [get_color(c) for c in colors]
-        self.pixels = spread(self.colors, self.num_leds, 10)
+        self.pixels = spread(self.colors, 10, self.num_leds)
 
     def __next__(self):
         self.pixels = rotate_right(self.pixels, 1)

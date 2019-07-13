@@ -46,14 +46,14 @@ class TestOPCLib(unittest.TestCase):
 
     def test_spread(self):
         with self.assertRaises(ValueError):
-            # no colors provided
-            opcutil.spread([], 6, 2)
+            # no values provided
+            opcutil.spread([], 2, 6)
         with self.assertRaises(ValueError):
-            # cannot spread across a negative number of LEDs
-            opcutil.spread(['c1', 'c2'], -3, 1)
+            # list length cannot be negative
+            opcutil.spread(['c1', 'c2'], 1, -3)
         with self.assertRaises(ValueError):
-            # cannot spread across a negative number of LEDs
-            opcutil.spread(['c1', 'c2'], 6, -2)
+            # sequence length cannot be negative
+            opcutil.spread(['c1', 'c2'], -2, 6)
 
         assert opcutil.spread(['c1'], 5, 2) == ['c1', 'c1', 'c1', 'c1', 'c1']
         assert opcutil.spread(['c1', 'c2'], 8, 2) == ['c1', 'c1', 'c2', 'c2',
