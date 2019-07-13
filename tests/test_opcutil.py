@@ -34,15 +34,18 @@ class TestOPCLib(unittest.TestCase):
             # cannot spread across a negative number of LEDs
             opcutil.even_spread(['c1', 'c2'], -3)
 
-        assert opcutil.even_spread(['c1', 'c2', 'c3'], 9) == ['c1', 'c1', 'c1',
-                                                              'c2', 'c2', 'c2',
-                                                              'c3', 'c3', 'c3']
-        assert opcutil.even_spread(['c1', 'c2', 'c3'], 11) == ['c1', 'c1', 'c1',
-                                                               'c2', 'c2', 'c2',
-                                                               'c3', 'c3', 'c3',
-                                                               'c1', 'c1']
-        assert opcutil.even_spread(['c1'], 0) == []
-        assert opcutil.even_spread(['c1'], 5) == ['c1', 'c1', 'c1', 'c1', 'c1']
+        self.assertEqual(opcutil.even_spread(['c1', 'c2', 'c3'], 9),
+                         ['c1', 'c1', 'c1',
+                          'c2', 'c2', 'c2',
+                          'c3', 'c3', 'c3'])
+        self.assertEqual(opcutil.even_spread(['c1', 'c2', 'c3'], 11),
+                         ['c1', 'c1', 'c1',
+                          'c2', 'c2', 'c2',
+                          'c3', 'c3', 'c3',
+                          'c1', 'c1'])
+        self.assertEqual(opcutil.even_spread(['c1'], 0), [])
+        self.assertEqual(opcutil.even_spread(['c1'], 5),
+                         ['c1', 'c1', 'c1', 'c1', 'c1'])
 
     def test_spread(self):
         with self.assertRaises(ValueError):
@@ -55,12 +58,17 @@ class TestOPCLib(unittest.TestCase):
             # sequence length cannot be negative
             opcutil.spread(['c1', 'c2'], -2, 6)
 
-        assert opcutil.spread(['c1'], 5, 2) == ['c1', 'c1', 'c1', 'c1', 'c1']
-        assert opcutil.spread(['c1', 'c2'], 8, 2) == ['c1', 'c1', 'c2', 'c2',
-                                                      'c1', 'c1', 'c2', 'c2']
-        assert opcutil.spread(['c1', 'c2', 'c3'], 7, 3) == ['c1', 'c1', 'c1',
-                                                            'c2', 'c2', 'c2',
-                                                            'c3']
+        self.assertEqual(opcutil.spread(['c1'], 2, 5),
+                         ['c1', 'c1', 'c1', 'c1', 'c1'])
+        self.assertEqual(opcutil.spread(['c1', 'c2'], 2, 8),
+                         ['c1', 'c1',
+                          'c2', 'c2',
+                          'c1', 'c1',
+                          'c2', 'c2'])
+        self.assertEqual(opcutil.spread(['c1', 'c2', 'c3'], 3, 7),
+                         ['c1', 'c1', 'c1',
+                          'c2', 'c2', 'c2',
+                          'c3'])
 
     def test_shift(self):
         self.assertEqual(opcutil.shift((0, 0, 0), (100, 100, 100), 0.1),
