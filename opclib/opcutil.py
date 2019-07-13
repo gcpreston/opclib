@@ -1,7 +1,9 @@
 import re
 import math
 
-from typing import Tuple, List, Iterable
+from typing import Tuple, List
+
+Color = Tuple[float, float, float]
 
 
 def is_color(s: str) -> bool:
@@ -14,7 +16,7 @@ def is_color(s: str) -> bool:
     return bool(re.match(r'^#[A-Fa-f0-9]{6}$', s))
 
 
-def get_color(hex_str: str) -> Tuple[int, int, int]:
+def get_color(hex_str: str) -> Color:
     """
     Calculate a 3-tuple representing the color in the given hex.
 
@@ -27,9 +29,12 @@ def get_color(hex_str: str) -> Tuple[int, int, int]:
         raise ValueError("Please provide a color in the format '#RRGGBB'. "
                          f"Received {hex_repr}.")
 
-    red = int(hex_str[1:3], 16)
-    blue = int(hex_str[3:5], 16)
-    green = int(hex_str[5:7], 16)
+    def hexfloat(h: str) -> float:
+        return float(int(h, 16))
+
+    red = hexfloat(hex_str[1:3])
+    blue = hexfloat(hex_str[3:5])
+    green = hexfloat(hex_str[5:7])
 
     return red, blue, green
 
@@ -88,8 +93,7 @@ def spread(colors: List, num_leds: int, pixels_per_color: int):
     return pixels
 
 
-def shift(current: Iterable[float], goal: Iterable[float],
-          p: float) -> Iterable[float]:
+def shift(current: Color, goal: Color, p: float) -> Color:
     """
     Shift a color towards another.
 
@@ -98,7 +102,10 @@ def shift(current: Iterable[float], goal: Iterable[float],
     :param p: a value indicating how far to shift (0 => no shift, 1 => ``goal``)
     :return: the shifted color
     """
-    return tuple([c + ((g - c) * p) for c, g in zip(current, goal)])
+    new_vals = [c + ((g - c) * p) for c, g in zip(current, goal)]
+    # explicitly give the first 3 values so it doesn't complain about being
+    # Tuple[float, ...] rather than Tuple[float, float, float]
+    return new_vals[0], new_vals[1], new_vals[2]
 
 
 def rotate_left(l: List, n: int):

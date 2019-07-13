@@ -1,12 +1,9 @@
 import abc
 import time
 
-from typing import NewType, List, Tuple
+from typing import List
 from . import opc
-from .opcutil import is_color
-
-# TODO: Redefine Color to Tuple[int, int, int]
-Color = NewType('Color', Tuple[float, float, float])
+from .opcutil import Color, is_color
 
 
 # IDEA
@@ -47,7 +44,6 @@ class LightConfig(abc.ABC):
         """
         Run this lighting configuration.
         """
-        print(f'Running on {host}:{port}')
         self.client = opc.Client(f'{host}:{port}')
 
     @staticmethod

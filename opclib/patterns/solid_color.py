@@ -1,6 +1,5 @@
-from typing import Tuple
 from ..interface import StaticLightConfig
-from ..opcutil import get_color
+from ..opcutil import Color, get_color
 
 
 class SolidColor(StaticLightConfig):
@@ -14,7 +13,7 @@ class SolidColor(StaticLightConfig):
         :param color: the color to dislpay (in format "#RRGGBB")
         """
         super().__init__(num_leds)
-        self.color: Tuple[int, int, int] = get_color(color)
+        self.color: Color = get_color(color)
 
     def pattern(self):
         return [self.color] * self.num_leds
