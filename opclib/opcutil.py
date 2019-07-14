@@ -8,20 +8,25 @@ be used with any kinds of lists.
 import re
 import math
 
-from typing import Tuple, List
+from typing import Any, Tuple, List
 
-ColorHex = str  # "#RRGGBB" format, can't be dynamically enforced unfortunately
 ColorData = Tuple[float, float, float]  # 3-tuple representing actual RGB value
+ColorHex = str  # ``color`` must be "#RRGGBB" format
+ColorList = List[ColorHex]  # ``color_list`` must be non-empty list of ColorHex
 
 
-def is_color(s: str) -> bool:
+def is_color(v: Any) -> bool:
     """
-    Determine if ``s`` is a color hex in the format #RRGGBB.
-
-    :param s: the string to check
-    :return: ``True`` if ``s`` fits the pattern; ``False`` otherwise
+    Determine whether ``v`` is a valid ``ColorHex``.
     """
-    return bool(re.match(r'^#[A-Fa-f0-9]{6}$', s))
+    return isinstance(v, str) and bool(re.match(r'^#[A-Fa-f0-9]{6}$', v))
+
+
+def is_color_list(v: Any) -> bool:
+    """
+    Determine whether ``v`` is a valid ``ColorList``.
+    """
+    return isinstance(v, list) and all([is_color(c) for c in v])
 
 
 def get_color(hex_str: ColorHex) -> ColorData:

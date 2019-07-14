@@ -9,8 +9,9 @@ class Strobe(DynamicLightConfig):
     speed = 20
     _on = True
 
+    # TODO: Get rid of num_leds, maybe subclass a different ABC?
     def __init__(self, config: LightConfig = SolidColor('#FFFFFF'),
-                 speed: int = None, num_leds: int = 512, port: int = 7890):
+                 speed: int = None, num_leds: int = 512, **kwargs):
         """
         Initialize a new Stobe.
 
@@ -19,7 +20,7 @@ class Strobe(DynamicLightConfig):
         :param num_leds: the number of LEDs
         :param port: the port the Fadecandy server is running on
         """
-        super().__init__(speed, num_leds, port)
+        super().__init__(speed, num_leds, **kwargs)
         self._config = config
 
     def __next__(self):

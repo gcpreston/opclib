@@ -7,10 +7,17 @@ class Stripes(StaticLightConfig):
     """
     Display multiple static colors.
     """
+    color_list: List[ColorData]  # colors to display
 
-    def __init__(self, colors: List[ColorHex], num_leds: int = 512):
-        super().__init__(num_leds)
-        self.colors = [get_color(c) for c in colors]
+    def __init__(self, color_list: List[ColorHex], num_leds: int = 512,
+                 **kwargs):
+        """
+        Initialize a new Stripes configuration.
+        :param color_list: the colors to use ("#RRGGBB" format)
+        """
+        super().__init__(num_leds, **kwargs)
+        super().validate_color_list(color_list)
+        self.color_list = [get_color(c) for c in color_list]
 
     def pattern(self) -> List[ColorData]:
-        return spread(self.colors, 10, self.num_leds)
+        return spread(self.color_list, 10, self.num_leds)

@@ -3,7 +3,7 @@ import time
 
 from typing import List
 from . import opc
-from .opcutil import ColorData, is_color
+from .opcutil import ColorData, ColorHex, is_color, is_color_list
 
 
 # IDEA
@@ -19,7 +19,7 @@ class LightConfig(abc.ABC):
     """
     client: opc.Client
 
-    def __init__(self, num_leds: int = 512):
+    def __init__(self, num_leds: int = 512, **kwargs):
         """
         Initialize a new LightConfig.
 
@@ -63,66 +63,60 @@ class LightConfig(abc.ABC):
         :raises ValueError: if ``name`` is not associated with any patterns or
             the required arguments for the specified config are not provided
         """
-
-        def get_color():
-            """
-            Validate and retrieve ``color``.
-            :return: the color string (#RRGGBB)
-            :raises ValueError: if a color of the correct format is not found
-            """
-            if not color or not is_color(color):
-                raise ValueError(
-                    "Expected a color in the format '#RRGGBB', "
-                    f"Received {color!r}.")
-            return color
-
-        def get_color_list():
-            """
-            Validate and retrieve ``color_list``.
-            :return: the list of color strings (#RRGGBB)
-            :raises ValueError: if a list of correctly formatted colors is not
-                found
-            """
-            if not color_list or not all([is_color(c) for c in color_list]):
-                raise ValueError(
-                    "Expected a list of colors in the format '#RRGGBB', "
-                    f"Received {color_list!r}.")
-            return color_list
-
-        def set_speed(light_config: LightConfig) -> LightConfig:
-            """
-            Set the speed of the given ``LightConfig`` to ``speed``, if a value
-            is provided.
-            :param light_config: the ``LightConfig`` to set the speed of
-            :return: ``light_config`` updated
-            """
-            if speed:
-                light_config.speed = speed
-            return light_config
-
         # importing patterns at the top of file causes circular import issues
         from . import patterns
 
-        # TODO: Use getattr here (will most likely require standardization of
-        #   constructor parameter format)
-        if pattern == 'Fade':
-            light = set_speed(patterns.Fade(get_color_list()))
-        elif pattern == 'Scroll':
-            light = set_speed(patterns.Scroll(get_color_list()))
-        elif pattern == 'SolidColor':
-            light = patterns.SolidColor(get_color())
-        elif pattern == 'Stripes':
-            light = patterns.Stripes(get_color_list())
-        elif pattern == 'Off':
-            light = patterns.Off()
-        else:
+        config = {
+            'strobe': strobe,
+            'color': color,
+            'color_list': color_list,
+            'speed': speed
+        }
+
+        try:
+            light = getattr(patterns, pattern)(**config)
+        except AttributeError:
             raise ValueError(f'{pattern!r} is not associated with any lighting '
                              f'configurations')
 
         if strobe:
-            return patterns.modifiers.Strobe(light)
-        else:
-            return light
+            light = patterns.modifiers.Strobe(light)
+
+        return light
+
+    @staticmethod
+    def validate_color(color: ColorHex) -> None:
+        """
+        Ensure that a value passed as the ``color`` parameter is valid. This
+        means it is a string of the format "#RRGGBB". If the given value
+        is invalid, an exception is raised.
+
+        This method should be called in the contructor of ``LightConfig``
+        subclasses that take a ``color`` parameter.
+
+        :param color: the ``color`` to validate
+        :raises TypeError: if ``color`` is not valid
+        """
+        if not is_color(color):
+            raise TypeError('color must be in format "#RRGGBB"')
+
+    @staticmethod
+    def validate_color_list(color_list: List[ColorHex]) -> None:
+        """
+        Ensure that a value passed as the ``color_list`` parameter is valid.
+        This means it is a list of strings in the format "#RRGGBB" with a length
+        of at least one. In other words, it is a non-empty ``list[ColorHex]``.
+        If the given value is invalid, an exception is raised.
+
+        This method should be called in the contructor of ``LightConfig``
+        subclasses that take a ``color_list`` parameter.
+
+        :param color_list: the ``color_list`` to validate
+        :raises TypeError: if ``color_list`` is not valid
+        """
+        if not is_color_list(color_list):
+            raise TypeError('color_list must be a non-empty list of strings '
+                            'in format "#RRGGBB')
 
 
 class StaticLightConfig(LightConfig, abc.ABC):
@@ -159,14 +153,14 @@ class DynamicLightConfig(LightConfig, abc.ABC):
     A lighting configuration that displays a moving pattern.
     """
 
-    def __init__(self, speed: int = None, num_leds: int = 512):
+    def __init__(self, speed: int = None, num_leds: int = 512, **kwargs):
         """
-        Initialize a new LightConfig.
+        Initialize a new DynamicLightConfig.
 
         :param speed: the speed at which the lights change (updates per second)
         :param num_leds: the number of LEDs
         """
-        super().__init__(num_leds)
+        super().__init__(num_leds, **kwargs)
         if speed:
             self.speed = speed
 
