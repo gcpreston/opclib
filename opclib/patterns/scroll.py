@@ -9,15 +9,13 @@ class Scroll(DynamicLightConfig):
     """
     color_list: List[ColorData]  # colors to scroll
     pixels: List[ColorData]  # current list of pixels
-    speed = 8
 
-    def __init__(self, color_list: List[str], speed: int = None,
-                 num_leds: int = 512, **kwargs):
+    def __init__(self, color_list: List[str], speed: int = 8, **kwargs):
         """
         Initialize a new Scroll configuration.
         :param color_list: the colors to use ("#RRGGBB" format)
         """
-        super().__init__(speed, num_leds, **kwargs)
+        super().__init__(speed, **kwargs)
         super().validate_color_list(color_list)
 
         self.color_list = [get_color(c) for c in color_list]

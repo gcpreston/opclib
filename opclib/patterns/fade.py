@@ -9,19 +9,17 @@ class Fade(DynamicLightConfig):
     """
     color_list: List[ColorData]  # colors to fade between
     pixels: List[ColorData]  # current list of pixels
-    speed: int = 5
 
     _current_color: ColorData
     _color_index = 0  # index of color being faded towards in self.colors
     _fade_index = 0  # how far we are between two colors [0-9]
 
-    def __init__(self, color_list: List[ColorHex], speed: int = None,
-                 num_leds: int = 512, **kwargs):
+    def __init__(self, color_list: List[ColorHex], speed: int = 5, **kwargs):
         """
         Initialize a new Fade configuration.
         :param color_list: the colors to use ("#RRGGBB" format)
         """
-        super().__init__(speed, num_leds, **kwargs)
+        super().__init__(speed, **kwargs)
         super().validate_color_list(color_list)
 
         self.color_list = [get_color(c) for c in color_list]

@@ -10,12 +10,12 @@ class SolidColor(StaticLightConfig):
     """
     color: ColorData
 
-    def __init__(self, color: ColorHex, num_leds: int = 512, **kwargs):
+    def __init__(self, color: ColorHex, **kwargs):
         """
         Initialize a new SolidColor configuration.
         :param color: the color to dislpay ("#RRGGBB" format)
         """
-        super().__init__(num_leds, **kwargs)
+        super().__init__(**kwargs)
         super().validate_color(color)
         self.color: ColorData = get_color(color)
 

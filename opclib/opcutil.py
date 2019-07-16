@@ -26,7 +26,7 @@ def is_color_list(v: Any) -> bool:
     """
     Determine whether ``v`` is a valid ``ColorList``.
     """
-    return isinstance(v, list) and all([is_color(c) for c in v])
+    return isinstance(v, list) and len(v) > 0 and all([is_color(c) for c in v])
 
 
 def get_color(hex_str: ColorHex) -> ColorData:

@@ -1,4 +1,5 @@
 import unittest
+
 from opclib import opcutil
 
 
@@ -16,6 +17,15 @@ class TestOPCLib(unittest.TestCase):
 
         for color in self.invalid_colors:
             self.assertFalse(opcutil.is_color(color))
+
+    def test_is_color_list(self):
+        self.assertFalse(
+            opcutil.is_color_list(['#001122', '334455', '#667788']))
+        self.assertFalse(opcutil.is_color_list([]))
+
+        self.assertTrue(
+            opcutil.is_color_list(['#001122', '#334455', '#667788']))
+        self.assertTrue(opcutil.is_color_list(['#FA016B']))
 
     def test_get_color(self):
         for color in self.invalid_colors:
