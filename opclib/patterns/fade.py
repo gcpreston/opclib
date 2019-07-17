@@ -1,12 +1,13 @@
 from typing import List
 from ..interface import DynamicLightConfig
-from ..opcutil import ColorHex, ColorData, is_color, get_color, shift
+from ..opcutil import ColorHex, ColorData, get_color, shift
 
 
 class Fade(DynamicLightConfig):
     """
     Fade between specified colors.
     """
+    speed: int = 5
     color_list: List[ColorData]  # colors to fade between
     pixels: List[ColorData]  # current list of pixels
 
@@ -14,13 +15,13 @@ class Fade(DynamicLightConfig):
     _color_index = 0  # index of color being faded towards in self.colors
     _fade_index = 0  # how far we are between two colors [0-9]
 
-    def __init__(self, color_list: List[ColorHex], speed: int = 5, **kwargs):
+    def __init__(self, color_list: List[ColorHex], **kwargs):
         """
         Initialize a new Fade configuration.
         :param color_list: the colors to use ("#RRGGBB" format)
         """
-        super().__init__(speed, **kwargs)
-        super().validate_color_list(color_list)
+        super().__init__(**kwargs)
+        self.validate_color_list(color_list)
 
         self.color_list = [get_color(c) for c in color_list]
         self._current_color = self.color_list[0]

@@ -1,5 +1,5 @@
 from typing import List
-from ..opcutil import ColorHex, ColorData, get_color, even_spread, spread
+from ..opcutil import ColorHex, ColorData, get_color, spread, even_spread
 from ..interface import StaticLightConfig
 
 
@@ -17,7 +17,8 @@ class Stripes(StaticLightConfig):
         :param width: the width of each color strip
         """
         super().__init__(**kwargs)
-        super().validate_color_list(color_list)
+        self.validate_color_list(color_list)
+
         self.color_list = [get_color(c) for c in color_list]
         self.width = width
 

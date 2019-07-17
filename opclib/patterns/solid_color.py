@@ -16,7 +16,8 @@ class SolidColor(StaticLightConfig):
         :param color: the color to dislpay ("#RRGGBB" format)
         """
         super().__init__(**kwargs)
-        super().validate_color(color)
+        self.validate_color(color)
+
         self.color: ColorData = get_color(color)
 
     def pattern(self) -> List[ColorData]:

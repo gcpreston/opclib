@@ -69,11 +69,10 @@ def shift(current: ColorData, goal: ColorData, p: float) -> ColorData:
 
 def even_spread(vals: List, n: int) -> List:
     """
-    Evenly spread out the values across a larger list in order, repeating if the
-    end of ``vals`` is reached.
+    Spread out the values across a larger list in order as evenly as possible.
 
     Example:
-    >>> even_spread([1, 1, 2], 7) == [1, 1, 2, 1, 1, 2, 1]
+    >>> even_spread([1, 2, 3], 8) == [1, 1, 1, 2, 2, 2, 3, 3]
 
     :param vals: a list of values to spread
     :param n: the length of the list to create from the given values
@@ -88,10 +87,12 @@ def even_spread(vals: List, n: int) -> List:
     new_vals = []
     length_per_val = math.floor(n / len(vals))
     remainder = n % len(vals)
+    extra_vals = vals[:remainder]
 
     for val in vals:
         new_vals += [val] * length_per_val
-    new_vals += [vals[0]] * remainder
+        if val in extra_vals:
+            new_vals.append(val)
 
     return new_vals
 

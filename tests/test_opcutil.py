@@ -48,11 +48,14 @@ class TestOPCLib(unittest.TestCase):
                          ['c1', 'c1', 'c1',
                           'c2', 'c2', 'c2',
                           'c3', 'c3', 'c3'])
-        self.assertEqual(opcutil.even_spread(['c1', 'c2', 'c3'], 11),
-                         ['c1', 'c1', 'c1',
+        self.assertEqual(opcutil.even_spread(['c1', 'c2', 'c3'], 10),
+                         ['c1', 'c1', 'c1', 'c1',
                           'c2', 'c2', 'c2',
-                          'c3', 'c3', 'c3',
-                          'c1', 'c1'])
+                          'c3', 'c3', 'c3'])
+        self.assertEqual(opcutil.even_spread(['c1', 'c2', 'c3'], 11),
+                         ['c1', 'c1', 'c1', 'c1',
+                          'c2', 'c2', 'c2', 'c2',
+                          'c3', 'c3', 'c3'])
         self.assertEqual(opcutil.even_spread(['c1'], 0), [])
         self.assertEqual(opcutil.even_spread(['c1'], 5),
                          ['c1', 'c1', 'c1', 'c1', 'c1'])
