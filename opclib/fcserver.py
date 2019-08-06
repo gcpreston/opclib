@@ -6,6 +6,8 @@ import asyncio
 import atexit
 import logging
 
+__all__ = ['FadecandyServer']
+
 logger = logging.getLogger('fcserver')
 logger.setLevel(logging.INFO)
 

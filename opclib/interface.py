@@ -5,6 +5,7 @@ from typing import List
 from . import opc
 from .opcutil import ColorData, ColorHex, is_color, is_color_list
 
+__all__ = ['LightConfig', 'DynamicLightConfig', 'StaticLightConfig']
 
 # IDEA
 # Lighting configurations are iterators that generate the next list of pixels

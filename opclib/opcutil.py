@@ -10,6 +10,21 @@ import math
 
 from typing import Any, Tuple, List
 
+__all__ = [
+    'ColorData',
+    'ColorHex',
+    'ColorList',
+    'is_color',
+    'is_color_list',
+    'get_color',
+    'shift',
+    'even_spread',
+    'spread',
+    'rotate_left',
+    'rotate_right'
+]
+
+
 ColorData = Tuple[float, float, float]  # 3-tuple representing actual RGB value
 ColorHex = str  # ``color`` must be "#RRGGBB" format
 ColorList = List[ColorHex]  # ``color_list`` must be non-empty list of ColorHex
