@@ -5,7 +5,7 @@ with open('README.md') as readme:
 
 setup(
     name='opclib',
-    version='0.0.1',
+    version='0.0.2',
     author='Graham Preston',
     author_email='graham.preston@gmail.com',
     description='A wrapper library for Open Pixel Control.',
