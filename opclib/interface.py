@@ -47,6 +47,7 @@ class LightConfig(abc.ABC):
         """
         self.client = opc.Client(f'{host}:{port}')
 
+    # TODO: Have factory take a dictionary and do schema validation on it
     @staticmethod
     def factory(pattern: str = None, strobe: bool = False, color: str = None,
                 color_list: List[str] = None,
@@ -69,10 +70,12 @@ class LightConfig(abc.ABC):
 
         config = {
             'strobe': strobe,
-            'color': color,
-            'color_list': color_list,
             'speed': speed
         }
+        if color:
+            config['color'] = color
+        if color_list:
+            config['color_list'] = color_list
 
         try:
             light = getattr(patterns, pattern)(**config)
