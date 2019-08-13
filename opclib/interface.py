@@ -47,35 +47,33 @@ class LightConfig(abc.ABC):
         """
         self.client = opc.Client(f'{host}:{port}')
 
-    # TODO: Have factory take a dictionary and do schema validation on it
     @staticmethod
-    def factory(pattern: str = None, strobe: bool = False, color: str = None,
+    def factory(pattern: str, strobe: bool = False, color: str = None,
                 color_list: List[str] = None,
                 speed: int = None) -> 'LightConfig':
         """
-        Create an instance of a specific light configuration based on the given
-        name. Different configurations differ in required keyword arguments.
+        Generate a ``LightConfig`` based on keywaord arguments. Different
+        patterns differ in required keyword arguments.
 
         :param pattern: the name of the desired lighting configuration
         :param strobe: whether to add a strobe effect
-        :param color: (for solid_color) the color to display
-        :param color_list: (for fade and scroll) a list of colors to use
-        :param speed: (for any moving config) the speed to move at
-        :return: an instance of the class associated with ``name``
-        :raises ValueError: if ``name`` is not associated with any patterns or
-            the required arguments for the specified config are not provided
+        :param color: the color to use (if applicable)
+        :param color_list: the list of colors to use (if applicable)
+        :param speed: the speed to run a dynamic configuration at
+        :return: an instance of the class associated with ``pattern``
+        :raises ValueError: if ``pattern`` is not associated with any patterns
+            or the required arguments for the specified config are not provided
         """
         # importing patterns at the top of file causes circular import issues
         from . import patterns
 
-        config = {
-            'strobe': strobe,
-            'speed': speed
-        }
+        config = dict()
         if color:
             config['color'] = color
         if color_list:
             config['color_list'] = color_list
+        if speed:
+            config['speed'] = speed
 
         try:
             light = getattr(patterns, pattern)(**config)
