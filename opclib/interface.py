@@ -1,7 +1,7 @@
 import abc
 import time
 
-from typing import List
+from typing import List, Iterator
 from . import opc
 from .opcutil import ColorData, ColorHex, is_color, is_color_list
 
@@ -28,7 +28,7 @@ class LightConfig(abc.ABC):
         """
         self.num_leds: int = num_leds
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         Define any LightConfig to be iterable.
         """
@@ -44,6 +44,9 @@ class LightConfig(abc.ABC):
     def run(self, host: str = 'localhost', port: int = 7890) -> None:
         """
         Run this lighting configuration.
+
+        :param host: hostname or IP address of Fadecandy server
+        :param port: port that the Fadecandy server is running on
         """
         self.client = opc.Client(f'{host}:{port}')
 
