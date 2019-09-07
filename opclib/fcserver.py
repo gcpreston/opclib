@@ -27,15 +27,19 @@ class FadecandyServer:
         """
 
         async def _go():
+            args = []
             if sys.platform == 'win32':
                 server = 'fcserver.exe'
             elif sys.platform == 'darwin':
                 server = 'fcserver-osx'
             else:
                 server = 'fcserver-rpi'
+                args.append('sudo')
 
             here = os.path.dirname(os.path.abspath(__file__))
-            _fcserver_proc = subprocess.Popen(here + '/bin/' + server)
+            args.append(here + '/bin/' + server)
+
+            _fcserver_proc = subprocess.Popen(args)
             logger.info(f'Started {server}')
             return _fcserver_proc
 
