@@ -36,16 +36,16 @@ class Strobe(DynamicLightConfig):
         :param strobe_speed: the speed to strobe at (1 is fastest)
         """
         if isinstance(config, DynamicLightConfig):
-            super().__init__(config.speed, config.num_leds, **kwargs)
+            super().__init__(config.speed, **kwargs)
         else:
             # if there is no speed to reference, use default value
-            super().__init__(10, config.num_leds, **kwargs)
+            super().__init__(10, **kwargs)
 
         self._config = config
         self.strobe_speed = strobe_speed
 
     def __next__(self):
-        self._strobe_count = self._strobe_count + 1 % self.strobe_speed
+        self._strobe_count = (self._strobe_count + 1) % self.strobe_speed
         pixels = next(self._config)
 
         if self._strobe_count == 0:
