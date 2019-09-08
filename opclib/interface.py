@@ -51,18 +51,14 @@ class LightConfig(abc.ABC):
         self.client = opc.Client(f'{host}:{port}')
 
     @staticmethod
-    def factory(pattern: str, strobe: bool = False, color: str = None,
-                color_list: List[str] = None,
-                speed: int = None) -> 'LightConfig':
+    def factory(pattern: str, strobe: bool = False, **kwargs) -> 'LightConfig':
         """
         Generate a ``LightConfig`` based on keywaord arguments. Different
         patterns differ in required keyword arguments.
 
         :param pattern: the name of the desired lighting configuration
         :param strobe: whether to add a strobe effect
-        :param color: the color to use (if applicable)
-        :param color_list: the list of colors to use (if applicable)
-        :param speed: the speed to run a dynamic configuration at
+        :param kwargs: keyword arguments to pass to LightConfig constructor
         :return: an instance of the class associated with ``pattern``
         :raises ValueError: if ``pattern`` is not associated with any patterns
             or the required arguments for the specified config are not provided
@@ -70,16 +66,8 @@ class LightConfig(abc.ABC):
         # importing patterns at the top of file causes circular import issues
         from . import patterns
 
-        config = dict()
-        if color:
-            config['color'] = color
-        if color_list:
-            config['color_list'] = color_list
-        if speed:
-            config['speed'] = speed
-
         try:
-            light = getattr(patterns, pattern)(**config)
+            light = getattr(patterns, pattern)(**kwargs)
         except AttributeError:
             raise ValueError(f'{pattern!r} is not associated with any lighting '
                              f'configurations')
@@ -159,14 +147,13 @@ class DynamicLightConfig(LightConfig, abc.ABC):
     """
     speed: int
 
-    def __init__(self, speed: int = None, num_leds: int = 512, **kwargs):
+    def __init__(self, speed: int = None, **kwargs):
         """
         Initialize a new DynamicLightConfig.
 
         :param speed: the speed at which the lights change (updates per second)
-        :param num_leds: the number of LEDs
         """
-        super().__init__(num_leds, **kwargs)
+        super().__init__(**kwargs)
         if speed:
             self.speed = speed
 
