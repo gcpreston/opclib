@@ -1,7 +1,7 @@
+from . import patterns
 from .interface import *
 from .fcserver import *
 from .opcutil import *
-from .patterns import *
 
 pattern_names = patterns.__all__
 modifier_names = patterns.modifiers.__all__
