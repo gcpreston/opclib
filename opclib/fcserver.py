@@ -60,9 +60,12 @@ class FadecandyServer:
         Stop the Fadecandy server.
         """
         if self._server_running:
-            self._fcserver_proc.terminate()
-            self._server_running = False
-            logger.info('Stopped fcserver')
+            try:
+                self._fcserver_proc.terminate()
+                self._server_running = False
+                logger.info('Stopped fcserver')
+            except OSError as e:
+                logger.warning(f'Failed to terminate fcserver process: {e}')
 
     def __repr__(self):
         if self._server_running:
