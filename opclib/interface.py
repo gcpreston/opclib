@@ -22,7 +22,7 @@ class LightConfig(abc.ABC):
 
     def __init__(self, num_leds: int = 512, **kwargs):
         """
-        Initialize a new LightConfig.
+        Initialize a new :class:`~LightConfig`.
 
         :param num_leds: the number of LEDs
         """
@@ -30,7 +30,7 @@ class LightConfig(abc.ABC):
 
     def __iter__(self) -> Iterator:
         """
-        Define any LightConfig to be iterable.
+        Define any :class:`~LightConfig` to be iterable.
         """
         return self
 
@@ -53,7 +53,7 @@ class LightConfig(abc.ABC):
     @staticmethod
     def factory(pattern: str, strobe: bool = False, **kwargs) -> 'LightConfig':
         """
-        Generate a ``LightConfig`` based on keywaord arguments. Different
+        Generate a :class:`~LightConfig` based on keywaord arguments. Different
         patterns differ in required keyword arguments.
 
         :param pattern: the name of the desired lighting configuration
@@ -84,7 +84,7 @@ class LightConfig(abc.ABC):
         means it is a string of the format "#RRGGBB". If the given value
         is invalid, an exception is raised.
 
-        This method should be called in the contructor of ``LightConfig``
+        This method should be called in the contructor of :class:`~LightConfig`
         subclasses that take a ``color`` parameter.
 
         :param color: the ``color`` to validate
@@ -98,10 +98,10 @@ class LightConfig(abc.ABC):
         """
         Ensure that a value passed as the ``color_list`` parameter is valid.
         This means it is a list of strings in the format "#RRGGBB" with a length
-        of at least one. In other words, it is a non-empty ``list[ColorHex]``.
+        of at least one. In other words, it is a non-empty ``List[ColorHex]``.
         If the given value is invalid, an exception is raised.
 
-        This method should be called in the contructor of ``LightConfig``
+        This method should be called in the contructor of :class:`~LightConfig`
         subclasses that take a ``color_list`` parameter.
 
         :param color_list: the ``color_list`` to validate
@@ -122,16 +122,7 @@ class StaticLightConfig(LightConfig, abc.ABC):
 
     def run(self, host: str = 'localhost', port: int = 7890) -> None:
         super().run(host, port)  # initialize client
-        black = [(0, 0, 0)] * self.num_leds
-        pattern = self.pattern()
-
-        # turn off LEDs
-        self.client.put_pixels(black)
-        self.client.put_pixels(black)
-
-        # fade in to pattern
-        time.sleep(0.5)
-        self.client.put_pixels(pattern)
+        self.client.put_pixels(self.pattern())  # set pixels
 
     @abc.abstractmethod
     def pattern(self) -> List[ColorData]:
@@ -149,7 +140,7 @@ class DynamicLightConfig(LightConfig, abc.ABC):
 
     def __init__(self, speed: int = None, **kwargs):
         """
-        Initialize a new DynamicLightConfig.
+        Initialize a new :class:`~DynamicLightConfig`.
 
         :param speed: the speed at which the lights change (updates per second)
         """
