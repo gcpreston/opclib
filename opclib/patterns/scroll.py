@@ -7,7 +7,7 @@ class Scroll(DynamicLightConfig):
     """
     Scroll through a multi-colored line.
     """
-    speed: int = 8
+    speed: float = 1.8
     color_list: List[ColorData]  # colors to scroll
     width: int  # (optional) number of pixels per color
     pixels: List[ColorData]  # current list of pixels

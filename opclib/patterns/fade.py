@@ -7,7 +7,7 @@ class Fade(DynamicLightConfig):
     """
     Fade between specified colors.
     """
-    speed: int = 5
+    speed: float = 4.0
     color_list: List[ColorData]  # colors to fade between
     pixels: List[ColorData]  # current list of pixels
 

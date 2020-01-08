@@ -136,7 +136,7 @@ class DynamicLightConfig(LightConfig, abc.ABC):
     """
     A lighting configuration that displays a moving pattern.
     """
-    speed: int
+    speed: float
 
     def __init__(self, speed: int = None, **kwargs):
         """
